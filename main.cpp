@@ -6,17 +6,17 @@ public:
     TrafficLight() : state("Red") {}
 
     void changeState() {
-        if (state == "Red") {
-            state = "Yellow";
-        } else if (state == "Yellow") {
-            state = "Green";
+        if (this->state == "Red") {
+            this->state = "Yellow";
+        } else if (this->state == "Yellow") {
+            this->state = "Green";
         } else {
-            state = "Red";
+            this->state = "Red";
         }
     }
 
     std::string getState() const {
-        return state;
+        return this->state;
     }
 
 private:
