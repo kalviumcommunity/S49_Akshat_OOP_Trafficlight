@@ -6,17 +6,17 @@ public:
     TrafficLight() : state("Red") {}
 
     void changeState() {
-        if (this->state == "Red") {
-            this->state = "Yellow";
-        } else if (this->state == "Yellow") {
-            this->state = "Green";
+        if (state == "Red") {
+            state = "Yellow";
+        } else if (state == "Yellow") {
+            state = "Green";
         } else {
-            this->state = "Red";
+            state = "Red";
         }
     }
 
     std::string getState() const {
-        return this->state;
+        return state;
     }
 
 private:
@@ -24,11 +24,15 @@ private:
 };
 
 int main() {
-    TrafficLight trafficLight;
+    const int numTrafficLights = 3;
+    TrafficLight trafficLights[numTrafficLights];
 
-    for (int i = 0; i < 10; ++i) {
-        std::cout << trafficLight.getState() << std::endl;
-        trafficLight.changeState();
+    for (int i = 0; i < numTrafficLights; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            std::cout << "Traffic Light " << i + 1 << ": " << trafficLights[i].getState() << std::endl;
+            trafficLights[i].changeState();
+        }
+        std::cout << std::endl;
     }
 
     return 0;
