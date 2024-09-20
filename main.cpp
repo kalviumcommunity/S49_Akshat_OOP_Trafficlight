@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-using namespace<std>
 
 class TrafficLight {
 public:
@@ -16,19 +15,19 @@ public:
         }
     }
 
-    string getState() const {
+    std::string getState() const {
         return state;
     }
 
 private:
-    string state;
+    std::string state;
 };
 
 int main() {
     TrafficLight trafficLight;
 
     for (int i = 0; i < 10; ++i) {
-        cout << trafficLight.getState() << endl;
+        std::cout << trafficLight.getState() << std::endl;
         trafficLight.changeState();
     }
 
