@@ -1,39 +1,50 @@
 #include <iostream>
 #include <string>
 
+using namespace std;
+
 class TrafficLight {
 public:
-    TrafficLight() : state("Red") {}
+    TrafficLight() : state("Red") {
+        cout << "Traffic Light Created with state: " << state << endl;
+    }
 
     void changeState() {
-        if (state == "Red") {
-            state = "Yellow";
-        } else if (state == "Yellow") {
-            state = "Green";
+        if (this->state == "Red") {
+            this->state = "Yellow";
+        } else if (this->state == "Yellow") {
+            this->state = "Green";
         } else {
-            state = "Red";
+            this->state = "Red";
         }
     }
 
-    std::string getState() const {
-        return state;
+    string getState() const {
+        return this->state;
+    }
+
+    ~TrafficLight() {
+        cout << "Traffic Light with state " << state << " is being destroyed." << endl;
     }
 
 private:
-    std::string state;
+    string state;
 };
 
 int main() {
     const int numTrafficLights = 3;
-    TrafficLight trafficLights[numTrafficLights];
+
+    TrafficLight* trafficLights = new TrafficLight[numTrafficLights];
 
     for (int i = 0; i < numTrafficLights; ++i) {
         for (int j = 0; j < 10; ++j) {
-            std::cout << "Traffic Light " << i + 1 << ": " << trafficLights[i].getState() << std::endl;
+            cout << "Traffic Light " << i + 1 << ": " << trafficLights[i].getState() << endl;
             trafficLights[i].changeState();
         }
-        std::cout << std::endl;
+        cout << endl;
     }
+
+    delete[] trafficLights;
 
     return 0;
 }
