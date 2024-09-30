@@ -4,12 +4,17 @@
 using namespace std;
 
 class TrafficLight {
-public:
-    TrafficLight() : state("Red") {
-        ++totalTrafficLights;  
-        cout << "Traffic Light Created with state: " << state << endl;
-        cout << "Total Traffic Lights: " << totalTrafficLights << endl;
-    }
+    private:
+    string state;
+
+    static int totalTrafficLights;
+
+    public:
+        TrafficLight() : state("Red") {
+            ++totalTrafficLights;  
+            cout << "Traffic Light Created with state: " << state << endl;
+            cout << "Total Traffic Lights: " << totalTrafficLights << endl;
+        }
 
     void changeState() {
         if (this->state == "Red") {
@@ -35,10 +40,6 @@ public:
         return totalTrafficLights;
     }
 
-private:
-    string state;
-
-    static int totalTrafficLights;
 };
 
 int TrafficLight::totalTrafficLights = 0;
@@ -56,7 +57,11 @@ int main() {
         cout << endl;
     }
 
+    cout << "Total Traffic Lights after creation: " << TrafficLight::getTotalTrafficLights() << endl;
+
     delete[] trafficLights;
+
+    cout << "Total Traffic Lights after deletion: " << TrafficLight::getTotalTrafficLights() << endl;
 
     return 0;
 }
