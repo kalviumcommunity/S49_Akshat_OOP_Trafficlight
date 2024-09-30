@@ -6,7 +6,9 @@ using namespace std;
 class TrafficLight {
 public:
     TrafficLight() : state("Red") {
+        ++totalTrafficLights;  
         cout << "Traffic Light Created with state: " << state << endl;
+        cout << "Total Traffic Lights: " << totalTrafficLights << endl;
     }
 
     void changeState() {
@@ -24,12 +26,22 @@ public:
     }
 
     ~TrafficLight() {
+        --totalTrafficLights;  
         cout << "Traffic Light with state " << state << " is being destroyed." << endl;
+        cout << "Total Traffic Lights: " << totalTrafficLights << endl;
+    }
+
+    static int getTotalTrafficLights() {
+        return totalTrafficLights;
     }
 
 private:
     string state;
+
+    static int totalTrafficLights;
 };
+
+int TrafficLight::totalTrafficLights = 0;
 
 int main() {
     const int numTrafficLights = 3;
