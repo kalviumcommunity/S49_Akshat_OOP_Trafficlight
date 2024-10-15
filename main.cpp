@@ -5,12 +5,18 @@ using namespace std;
 
 class TrafficLight {
     private:
-        string state;    
+        string state;   
         static int totalTrafficLights;  
 
     public:
         TrafficLight() : state("Red") {
-            ++totalTrafficLights;  
+            ++totalTrafficLights;
+            cout << "Default Traffic Light Created with state: " << state << endl;
+            cout << "Total Traffic Lights: " << totalTrafficLights << endl;
+        }
+
+        TrafficLight(const string& initialState) : state(initialState) {
+            ++totalTrafficLights;
             cout << "Traffic Light Created with state: " << state << endl;
             cout << "Total Traffic Lights: " << totalTrafficLights << endl;
         }
@@ -25,7 +31,7 @@ class TrafficLight {
 
         void changeState() {
             if (state == "Red") {
-                setState("Yellow");  
+                setState("Yellow");
             } else if (state == "Yellow") {
                 setState("Green");
             } else {
@@ -38,24 +44,29 @@ class TrafficLight {
         }
 
         ~TrafficLight() {
-            --totalTrafficLights;  
+            --totalTrafficLights;
             cout << "Traffic Light with state " << state << " is being destroyed." << endl;
             cout << "Total Traffic Lights: " << totalTrafficLights << endl;
         }
-        
+
 };
 
 int TrafficLight::totalTrafficLights = 0;
 
 class Intersection {
     private:
-        string name;                    
+        string name;                     
         TrafficLight* trafficLights;     
         int numTrafficLights;            
 
     public:
+        Intersection() : name("Unnamed Intersection"), numTrafficLights(0), trafficLights(nullptr) {
+            cout << "Default Intersection Created: " << name << endl;
+        }
+
         Intersection(const string& name, int numLights) : name(name), numTrafficLights(numLights) {
             trafficLights = new TrafficLight[numTrafficLights];  
+            cout << "Intersection " << name << " Created with " << numTrafficLights << " Traffic Lights." << endl;
         }
 
         string getName() const {
@@ -77,13 +88,23 @@ class Intersection {
         }
 
         ~Intersection() {
-            delete[] trafficLights;  
+            delete[] trafficLights;
             cout << "Intersection " << name << " is being destroyed." << endl;
         }
 };
 
+
 int main() {
     const int numTrafficLights = 3;
+
+    TrafficLight defaultLight;
+    defaultLight.changeState();
+    cout << "Default Traffic Light State: " << defaultLight.getState() << endl;
+
+    TrafficLight parameterizedLight("Green");
+    cout << "Parameterized Traffic Light State: " << parameterizedLight.getState() << endl;
+
+    Intersection defaultIntersection;
 
     Intersection intersection("Main Street", numTrafficLights);
 
