@@ -5,8 +5,8 @@ using namespace std;
 
 class TrafficLight {
     private:
-        string state;
-        static int totalTrafficLights;
+        string state;    
+        static int totalTrafficLights;  
 
     public:
         TrafficLight() : state("Red") {
@@ -25,7 +25,7 @@ class TrafficLight {
 
         void changeState() {
             if (state == "Red") {
-                setState("Yellow");
+                setState("Yellow");  
             } else if (state == "Yellow") {
                 setState("Green");
             } else {
@@ -33,28 +33,29 @@ class TrafficLight {
             }
         }
 
+        static int getTotalTrafficLights() {
+            return totalTrafficLights;
+        }
+
         ~TrafficLight() {
             --totalTrafficLights;  
             cout << "Traffic Light with state " << state << " is being destroyed." << endl;
             cout << "Total Traffic Lights: " << totalTrafficLights << endl;
         }
-
-        static int getTotalTrafficLights() {
-            return totalTrafficLights;
-        }
+        
 };
 
 int TrafficLight::totalTrafficLights = 0;
 
 class Intersection {
     private:
-        string name;
-        TrafficLight* trafficLights;
-        int numTrafficLights;
+        string name;                    
+        TrafficLight* trafficLights;     
+        int numTrafficLights;            
 
     public:
         Intersection(const string& name, int numLights) : name(name), numTrafficLights(numLights) {
-            trafficLights = new TrafficLight[numTrafficLights];
+            trafficLights = new TrafficLight[numTrafficLights];  
         }
 
         string getName() const {
@@ -76,7 +77,7 @@ class Intersection {
         }
 
         ~Intersection() {
-            delete[] trafficLights;
+            delete[] trafficLights;  
             cout << "Intersection " << name << " is being destroyed." << endl;
         }
 };
