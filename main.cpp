@@ -53,6 +53,43 @@ class TrafficLight {
 
 int TrafficLight::totalTrafficLights = 0;
 
+// Single Inheritance: PedestrianLight inherits from TrafficLight
+class PedestrianLight : public TrafficLight {
+    public:
+        PedestrianLight() : TrafficLight("Don't Walk") {
+            cout << "Pedestrian Light Created with state: Don't Walk" << endl;
+        }
+
+        void changeState() {
+            if (getState() == "Don't Walk") {
+                setState("Walk");
+            } else {
+                setState("Don't Walk");
+            }
+        }
+};
+
+// Multilevel Inheritance: SmartTrafficLight inherits from TrafficLight
+class SmartTrafficLight : public TrafficLight {
+    private:
+        bool trafficDetected; // Extra feature for smart traffic lights
+
+    public:
+        SmartTrafficLight() : TrafficLight("Red"), trafficDetected(false) {
+            cout << "Smart Traffic Light Created with state: Red" << endl;
+        }
+
+        void detectTraffic(bool traffic) {
+            trafficDetected = traffic;
+            if (trafficDetected) {
+                cout << "Traffic Detected. Adjusting light state." << endl;
+                changeState();
+            } else {
+                cout << "No Traffic Detected. Light stays the same." << endl;
+            }
+        }
+};
+
 class Intersection {
     private:
         string name;                     
@@ -103,6 +140,17 @@ int main() {
 
     TrafficLight parameterizedLight("Green");
     cout << "Parameterized Traffic Light State: " << parameterizedLight.getState() << endl;
+
+    // Single Inheritance Example
+    PedestrianLight pedLight;
+    cout << "Pedestrian Light State: " << pedLight.getState() << endl;
+    pedLight.changeState();
+    cout << "Pedestrian Light State after change: " << pedLight.getState() << endl;
+
+    // Multilevel Inheritance Example
+    SmartTrafficLight smartLight;
+    smartLight.detectTraffic(true);
+    cout << "Smart Traffic Light State after traffic detection: " << smartLight.getState() << endl;
 
     Intersection defaultIntersection;
 
