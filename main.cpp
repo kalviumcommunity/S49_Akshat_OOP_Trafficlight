@@ -47,13 +47,14 @@ class TrafficLight {
             --totalTrafficLights;
             cout << "Traffic Light with state " << state << " is being destroyed." << endl;
             cout << "Total Traffic Lights: " << totalTrafficLights << endl;
-        }
+   
+    }
 
 };
 
 int TrafficLight::totalTrafficLights = 0;
 
-// Single Inheritance: PedestrianLight inherits from TrafficLight
+
 class PedestrianLight : public TrafficLight {
     public:
         PedestrianLight() : TrafficLight("Don't Walk") {
@@ -69,10 +70,10 @@ class PedestrianLight : public TrafficLight {
         }
 };
 
-// Multilevel Inheritance: SmartTrafficLight inherits from TrafficLight
+
 class SmartTrafficLight : public TrafficLight {
     private:
-        bool trafficDetected; // Extra feature for smart traffic lights
+        bool trafficDetected;
 
     public:
         SmartTrafficLight() : TrafficLight("Red"), trafficDetected(false) {
@@ -124,6 +125,15 @@ class Intersection {
             }
         }
 
+        void displayTrafficLights(const string& state) const {
+            cout << "Displaying traffic lights with state '" << state << "' at " << name << ":" << endl;
+            for (int i = 0; i < numTrafficLights; ++i) {
+                if (trafficLights[i].getState() == state) {
+                    cout << "Traffic Light " << i + 1 << ": " << trafficLights[i].getState() << endl;
+                }
+            }
+        }
+
         ~Intersection() {
             delete[] trafficLights;
             cout << "Intersection " << name << " is being destroyed." << endl;
@@ -141,13 +151,13 @@ int main() {
     TrafficLight parameterizedLight("Green");
     cout << "Parameterized Traffic Light State: " << parameterizedLight.getState() << endl;
 
-    // Single Inheritance Example
+
     PedestrianLight pedLight;
     cout << "Pedestrian Light State: " << pedLight.getState() << endl;
     pedLight.changeState();
     cout << "Pedestrian Light State after change: " << pedLight.getState() << endl;
 
-    // Multilevel Inheritance Example
+
     SmartTrafficLight smartLight;
     smartLight.detectTraffic(true);
     cout << "Smart Traffic Light State after traffic detection: " << smartLight.getState() << endl;
@@ -158,16 +168,9 @@ int main() {
 
     intersection.displayTrafficLights();
 
-    for (int i = 0; i < numTrafficLights; ++i) {
-        for (int j = 0; j < 10; ++j) {
-            intersection.displayTrafficLights();
-        }
-        cout << endl;
-    }
+    intersection.displayTrafficLights("Red");
 
     cout << "Total Traffic Lights after creation: " << TrafficLight::getTotalTrafficLights() << endl;
-
-    cout << "Total Traffic Lights after destruction: " << TrafficLight::getTotalTrafficLights() << endl;
-
+    
     return 0;
 }
