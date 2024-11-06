@@ -3,10 +3,16 @@
 
 using namespace std;
 
-class TrafficLight {
+class Light {
+    public:
+        virtual void changeState() = 0; 
+        virtual string getState() const = 0; 
+};
+
+class TrafficLight : public Light {
     private:
-        string state;   
-        static int totalTrafficLights;  
+        string state;
+        static int totalTrafficLights;
 
     public:
         TrafficLight() : state("Red") {
@@ -21,7 +27,7 @@ class TrafficLight {
             cout << "Total Traffic Lights: " << totalTrafficLights << endl;
         }
 
-        string getState() const {
+        string getState() const override {
             return state;
         }
 
@@ -29,7 +35,7 @@ class TrafficLight {
             state = newState;
         }
 
-        void changeState() {
+        void changeState() override { 
             if (state == "Red") {
                 setState("Yellow");
             } else if (state == "Yellow") {
@@ -47,13 +53,10 @@ class TrafficLight {
             --totalTrafficLights;
             cout << "Traffic Light with state " << state << " is being destroyed." << endl;
             cout << "Total Traffic Lights: " << totalTrafficLights << endl;
-   
-    }
-
+        }
 };
 
 int TrafficLight::totalTrafficLights = 0;
-
 
 class PedestrianLight : public TrafficLight {
     public:
@@ -61,7 +64,7 @@ class PedestrianLight : public TrafficLight {
             cout << "Pedestrian Light Created with state: Don't Walk" << endl;
         }
 
-        void changeState() {
+        void changeState() override { 
             if (getState() == "Don't Walk") {
                 setState("Walk");
             } else {
@@ -69,7 +72,6 @@ class PedestrianLight : public TrafficLight {
             }
         }
 };
-
 
 class SmartTrafficLight : public TrafficLight {
     private:
@@ -93,9 +95,9 @@ class SmartTrafficLight : public TrafficLight {
 
 class Intersection {
     private:
-        string name;                     
-        TrafficLight* trafficLights;     
-        int numTrafficLights;            
+        string name;
+        TrafficLight* trafficLights;
+        int numTrafficLights;
 
     public:
         Intersection() : name("Unnamed Intersection"), numTrafficLights(0), trafficLights(nullptr) {
@@ -103,7 +105,7 @@ class Intersection {
         }
 
         Intersection(const string& name, int numLights) : name(name), numTrafficLights(numLights) {
-            trafficLights = new TrafficLight[numTrafficLights];  
+            trafficLights = new TrafficLight[numTrafficLights];
             cout << "Intersection " << name << " Created with " << numTrafficLights << " Traffic Lights." << endl;
         }
 
@@ -125,21 +127,11 @@ class Intersection {
             }
         }
 
-        void displayTrafficLights(const string& state) const {
-            cout << "Displaying traffic lights with state '" << state << "' at " << name << ":" << endl;
-            for (int i = 0; i < numTrafficLights; ++i) {
-                if (trafficLights[i].getState() == state) {
-                    cout << "Traffic Light " << i + 1 << ": " << trafficLights[i].getState() << endl;
-                }
-            }
-        }
-
         ~Intersection() {
             delete[] trafficLights;
             cout << "Intersection " << name << " is being destroyed." << endl;
         }
 };
-
 
 int main() {
     const int numTrafficLights = 3;
@@ -151,26 +143,19 @@ int main() {
     TrafficLight parameterizedLight("Green");
     cout << "Parameterized Traffic Light State: " << parameterizedLight.getState() << endl;
 
-
     PedestrianLight pedLight;
     cout << "Pedestrian Light State: " << pedLight.getState() << endl;
     pedLight.changeState();
     cout << "Pedestrian Light State after change: " << pedLight.getState() << endl;
 
-
     SmartTrafficLight smartLight;
     smartLight.detectTraffic(true);
     cout << "Smart Traffic Light State after traffic detection: " << smartLight.getState() << endl;
 
-    Intersection defaultIntersection;
-
     Intersection intersection("Main Street", numTrafficLights);
-
     intersection.displayTrafficLights();
-
-    intersection.displayTrafficLights("Red");
-
-    cout << "Total Traffic Lights after creation: " << TrafficLight::getTotalTrafficLights() << endl;
     
+    cout << "Total Traffic Lights after creation: " << TrafficLight::getTotalTrafficLights() << endl;
+
     return 0;
 }
