@@ -95,13 +95,37 @@ class SmartTrafficLight : public TrafficLight {
         }
 };
 
+// New Feature: TimerControlledLight Class
+class TimerControlledLight : public TrafficLight {
+    private:
+        int timeDuration; // Duration for each light state in seconds
+
+    public:
+        TimerControlledLight(int duration) : TrafficLight("Red"), timeDuration(duration) {
+            cout << "Timer Controlled Light Created with state: Red and duration: " << timeDuration << " seconds" << endl;
+        }
+
+        void setTimeDuration(int duration) {
+            timeDuration = duration;
+        }
+
+        int getTimeDuration() const {
+            return timeDuration;
+        }
+
+        void changeState() override {
+            TrafficLight::changeState();
+            cout << "Light state changed with timer duration: " << timeDuration << " seconds." << endl;
+        }
+};
+
 // TrafficLightManager Class for SRP
 class TrafficLightManager {
     private:
-        vector<TrafficLight*> trafficLights;
+        vector<Light*> trafficLights;
 
     public:
-        void addTrafficLight(TrafficLight* light) {
+        void addTrafficLight(Light* light) {
             trafficLights.push_back(light);
         }
 
@@ -130,7 +154,7 @@ class Intersection {
             cout << "Intersection " << name << " Created." << endl;
         }
 
-        void addTrafficLight(TrafficLight* light) {
+        void addTrafficLight(Light* light) {
             trafficLightManager.addTrafficLight(light);
         }
 
@@ -146,17 +170,22 @@ class Intersection {
 
 // Main Function
 int main() {
+    // Creating Traffic Lights
     TrafficLight* defaultLight = new TrafficLight();
     TrafficLight* parameterizedLight = new TrafficLight("Green");
     PedestrianLight* pedLight = new PedestrianLight();
     SmartTrafficLight* smartLight = new SmartTrafficLight();
+    TimerControlledLight* timerLight = new TimerControlledLight(30); // New Timer Controlled Light
 
+    // Creating Intersection
     Intersection intersection("Main Street");
     intersection.addTrafficLight(defaultLight);
     intersection.addTrafficLight(parameterizedLight);
     intersection.addTrafficLight(pedLight);
     intersection.addTrafficLight(smartLight);
+    intersection.addTrafficLight(timerLight); // Adding Timer Controlled Light
 
+    // Displaying Traffic Lights
     intersection.displayTrafficLights();
 
     cout << "Total Traffic Lights after creation: " << TrafficLight::getTotalTrafficLights() << endl;
