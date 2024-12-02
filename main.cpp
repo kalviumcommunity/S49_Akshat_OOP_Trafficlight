@@ -1,14 +1,17 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
+// Abstract Light Class
 class Light {
     public:
         virtual void changeState() = 0; 
         virtual string getState() const = 0; 
 };
 
+// TrafficLight Class
 class TrafficLight : public Light {
     private:
         string state;
@@ -18,13 +21,11 @@ class TrafficLight : public Light {
         TrafficLight() : state("Red") {
             ++totalTrafficLights;
             cout << "Default Traffic Light Created with state: " << state << endl;
-            cout << "Total Traffic Lights: " << totalTrafficLights << endl;
         }
 
         TrafficLight(const string& initialState) : state(initialState) {
             ++totalTrafficLights;
             cout << "Traffic Light Created with state: " << state << endl;
-            cout << "Total Traffic Lights: " << totalTrafficLights << endl;
         }
 
         string getState() const override {
@@ -35,7 +36,7 @@ class TrafficLight : public Light {
             state = newState;
         }
 
-        void changeState() override { 
+        void changeState() override {
             if (state == "Red") {
                 setState("Yellow");
             } else if (state == "Yellow") {
@@ -52,19 +53,19 @@ class TrafficLight : public Light {
         ~TrafficLight() {
             --totalTrafficLights;
             cout << "Traffic Light with state " << state << " is being destroyed." << endl;
-            cout << "Total Traffic Lights: " << totalTrafficLights << endl;
         }
 };
 
 int TrafficLight::totalTrafficLights = 0;
 
+// PedestrianLight Class
 class PedestrianLight : public TrafficLight {
     public:
         PedestrianLight() : TrafficLight("Don't Walk") {
             cout << "Pedestrian Light Created with state: Don't Walk" << endl;
         }
 
-        void changeState() override { 
+        void changeState() override {
             if (getState() == "Don't Walk") {
                 setState("Walk");
             } else {
@@ -73,6 +74,7 @@ class PedestrianLight : public TrafficLight {
         }
 };
 
+// SmartTrafficLight Class
 class SmartTrafficLight : public TrafficLight {
     private:
         bool trafficDetected;
@@ -93,68 +95,70 @@ class SmartTrafficLight : public TrafficLight {
         }
 };
 
-class Intersection {
+// TrafficLightManager Class for SRP
+class TrafficLightManager {
     private:
-        string name;
-        TrafficLight* trafficLights;
-        int numTrafficLights;
+        vector<TrafficLight*> trafficLights;
 
     public:
-        Intersection() : name("Unnamed Intersection"), numTrafficLights(0), trafficLights(nullptr) {
-            cout << "Default Intersection Created: " << name << endl;
-        }
-
-        Intersection(const string& name, int numLights) : name(name), numTrafficLights(numLights) {
-            trafficLights = new TrafficLight[numTrafficLights];
-            cout << "Intersection " << name << " Created with " << numTrafficLights << " Traffic Lights." << endl;
-        }
-
-        string getName() const {
-            return name;
-        }
-
-        void setName(const string& newName) {
-            name = newName;
-        }
-
-        int getNumTrafficLights() const {
-            return numTrafficLights;
+        void addTrafficLight(TrafficLight* light) {
+            trafficLights.push_back(light);
         }
 
         void displayTrafficLights() const {
-            for (int i = 0; i < numTrafficLights; ++i) {
-                cout << "Traffic Light " << i + 1 << " at " << name << ": " << trafficLights[i].getState() << endl;
+            int i = 1;
+            for (auto light : trafficLights) {
+                cout << "Traffic Light " << i++ << ": " << light->getState() << endl;
             }
         }
 
+        ~TrafficLightManager() {
+            for (auto light : trafficLights) {
+                delete light;
+            }
+        }
+};
+
+// Intersection Class
+class Intersection {
+    private:
+        string name;
+        TrafficLightManager trafficLightManager;
+
+    public:
+        Intersection(const string& intersectionName) : name(intersectionName) {
+            cout << "Intersection " << name << " Created." << endl;
+        }
+
+        void addTrafficLight(TrafficLight* light) {
+            trafficLightManager.addTrafficLight(light);
+        }
+
+        void displayTrafficLights() const {
+            cout << "Traffic Lights at " << name << ":" << endl;
+            trafficLightManager.displayTrafficLights();
+        }
+
         ~Intersection() {
-            delete[] trafficLights;
             cout << "Intersection " << name << " is being destroyed." << endl;
         }
 };
 
+// Main Function
 int main() {
-    const int numTrafficLights = 3;
+    TrafficLight* defaultLight = new TrafficLight();
+    TrafficLight* parameterizedLight = new TrafficLight("Green");
+    PedestrianLight* pedLight = new PedestrianLight();
+    SmartTrafficLight* smartLight = new SmartTrafficLight();
 
-    TrafficLight defaultLight;
-    defaultLight.changeState();
-    cout << "Default Traffic Light State: " << defaultLight.getState() << endl;
+    Intersection intersection("Main Street");
+    intersection.addTrafficLight(defaultLight);
+    intersection.addTrafficLight(parameterizedLight);
+    intersection.addTrafficLight(pedLight);
+    intersection.addTrafficLight(smartLight);
 
-    TrafficLight parameterizedLight("Green");
-    cout << "Parameterized Traffic Light State: " << parameterizedLight.getState() << endl;
-
-    PedestrianLight pedLight;
-    cout << "Pedestrian Light State: " << pedLight.getState() << endl;
-    pedLight.changeState();
-    cout << "Pedestrian Light State after change: " << pedLight.getState() << endl;
-
-    SmartTrafficLight smartLight;
-    smartLight.detectTraffic(true);
-    cout << "Smart Traffic Light State after traffic detection: " << smartLight.getState() << endl;
-
-    Intersection intersection("Main Street", numTrafficLights);
     intersection.displayTrafficLights();
-    
+
     cout << "Total Traffic Lights after creation: " << TrafficLight::getTotalTrafficLights() << endl;
 
     return 0;
