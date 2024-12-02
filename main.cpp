@@ -1,194 +1,140 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
 using namespace std;
 
 // Abstract Light Class
 class Light {
     public:
-        virtual void changeState() = 0; 
-        virtual string getState() const = 0; 
+        virtual void changeState() = 0;
+        virtual string getState() const = 0;
+        virtual ~Light() {} // Virtual destructor for polymorphism
 };
 
 // TrafficLight Class
 class TrafficLight : public Light {
     private:
         string state;
-        static int totalTrafficLights;
 
     public:
         TrafficLight() : state("Red") {
-            ++totalTrafficLights;
-            cout << "Default Traffic Light Created with state: " << state << endl;
-        }
-
-        TrafficLight(const string& initialState) : state(initialState) {
-            ++totalTrafficLights;
-            cout << "Traffic Light Created with state: " << state << endl;
+            cout << "Traffic Light Created with state: Red" << endl;
         }
 
         string getState() const override {
             return state;
         }
 
-        void setState(const string& newState) {
-            state = newState;
-        }
-
         void changeState() override {
-            if (state == "Red") {
-                setState("Yellow");
-            } else if (state == "Yellow") {
-                setState("Green");
-            } else {
-                setState("Red");
-            }
-        }
-
-        static int getTotalTrafficLights() {
-            return totalTrafficLights;
+            if (state == "Red")
+                state = "Yellow";
+            else if (state == "Yellow")
+                state = "Green";
+            else
+                state = "Red";
         }
 
         ~TrafficLight() {
-            --totalTrafficLights;
-            cout << "Traffic Light with state " << state << " is being destroyed." << endl;
+            cout << "Traffic Light Destroyed." << endl;
         }
 };
 
-int TrafficLight::totalTrafficLights = 0;
-
 // PedestrianLight Class
-class PedestrianLight : public TrafficLight {
+class PedestrianLight : public Light {
+    private:
+        string state;
+
     public:
-        PedestrianLight() : TrafficLight("Don't Walk") {
+        PedestrianLight() : state("Don't Walk") {
             cout << "Pedestrian Light Created with state: Don't Walk" << endl;
         }
 
+        string getState() const override {
+            return state;
+        }
+
         void changeState() override {
-            if (getState() == "Don't Walk") {
-                setState("Walk");
-            } else {
-                setState("Don't Walk");
-            }
+            if (state == "Don't Walk")
+                state = "Walk";
+            else
+                state = "Don't Walk";
+        }
+
+        ~PedestrianLight() {
+            cout << "Pedestrian Light Destroyed." << endl;
         }
 };
 
-// SmartTrafficLight Class
-class SmartTrafficLight : public TrafficLight {
-    private:
-        bool trafficDetected;
-
-    public:
-        SmartTrafficLight() : TrafficLight("Red"), trafficDetected(false) {
-            cout << "Smart Traffic Light Created with state: Red" << endl;
-        }
-
-        void detectTraffic(bool traffic) {
-            trafficDetected = traffic;
-            if (trafficDetected) {
-                cout << "Traffic Detected. Adjusting light state." << endl;
-                changeState();
-            } else {
-                cout << "No Traffic Detected. Light stays the same." << endl;
-            }
-        }
-};
-
-// New Feature: TimerControlledLight Class
+// TimerControlledLight Class
 class TimerControlledLight : public TrafficLight {
     private:
-        int timeDuration; // Duration for each light state in seconds
+        int timer;
 
     public:
-        TimerControlledLight(int duration) : TrafficLight("Red"), timeDuration(duration) {
-            cout << "Timer Controlled Light Created with state: Red and duration: " << timeDuration << " seconds" << endl;
-        }
-
-        void setTimeDuration(int duration) {
-            timeDuration = duration;
-        }
-
-        int getTimeDuration() const {
-            return timeDuration;
+        TimerControlledLight(int duration) : timer(duration) {
+            cout << "Timer-Controlled Light Created with timer: " << timer << " seconds" << endl;
         }
 
         void changeState() override {
             TrafficLight::changeState();
-            cout << "Light state changed with timer duration: " << timeDuration << " seconds." << endl;
+            cout << "State changed with timer duration: " << timer << " seconds." << endl;
+        }
+
+        ~TimerControlledLight() {
+            cout << "Timer-Controlled Light Destroyed." << endl;
         }
 };
 
-// TrafficLightManager Class for SRP
+// TrafficLightManager Class
 class TrafficLightManager {
     private:
-        vector<Light*> trafficLights;
+        vector<Light*> lights;
 
     public:
-        void addTrafficLight(Light* light) {
-            trafficLights.push_back(light);
+        void addLight(Light* light) {
+            lights.push_back(light);
         }
 
-        void displayTrafficLights() const {
-            int i = 1;
-            for (auto light : trafficLights) {
-                cout << "Traffic Light " << i++ << ": " << light->getState() << endl;
+        void displayLights() const {
+            for (size_t i = 0; i < lights.size(); ++i) {
+                cout << "Light " << i + 1 << ": " << lights[i]->getState() << endl;
+            }
+        }
+
+        void changeAllLights() {
+            for (auto& light : lights) {
+                light->changeState();
             }
         }
 
         ~TrafficLightManager() {
-            for (auto light : trafficLights) {
+            for (auto light : lights) {
                 delete light;
             }
         }
 };
 
-// Intersection Class
-class Intersection {
-    private:
-        string name;
-        TrafficLightManager trafficLightManager;
-
-    public:
-        Intersection(const string& intersectionName) : name(intersectionName) {
-            cout << "Intersection " << name << " Created." << endl;
-        }
-
-        void addTrafficLight(Light* light) {
-            trafficLightManager.addTrafficLight(light);
-        }
-
-        void displayTrafficLights() const {
-            cout << "Traffic Lights at " << name << ":" << endl;
-            trafficLightManager.displayTrafficLights();
-        }
-
-        ~Intersection() {
-            cout << "Intersection " << name << " is being destroyed." << endl;
-        }
-};
-
 // Main Function
 int main() {
-    // Creating Traffic Lights
-    TrafficLight* defaultLight = new TrafficLight();
-    TrafficLight* parameterizedLight = new TrafficLight("Green");
-    PedestrianLight* pedLight = new PedestrianLight();
-    SmartTrafficLight* smartLight = new SmartTrafficLight();
-    TimerControlledLight* timerLight = new TimerControlledLight(30); // New Timer Controlled Light
+    // Create Lights
+    TrafficLight* trafficLight = new TrafficLight();
+    PedestrianLight* pedestrianLight = new PedestrianLight();
+    TimerControlledLight* timerLight = new TimerControlledLight(30);
 
-    // Creating Intersection
-    Intersection intersection("Main Street");
-    intersection.addTrafficLight(defaultLight);
-    intersection.addTrafficLight(parameterizedLight);
-    intersection.addTrafficLight(pedLight);
-    intersection.addTrafficLight(smartLight);
-    intersection.addTrafficLight(timerLight); // Adding Timer Controlled Light
+    // Manage Lights
+    TrafficLightManager manager;
+    manager.addLight(trafficLight);
+    manager.addLight(pedestrianLight);
+    manager.addLight(timerLight);
 
-    // Displaying Traffic Lights
-    intersection.displayTrafficLights();
+    // Display Initial States
+    cout << "\nInitial States:" << endl;
+    manager.displayLights();
 
-    cout << "Total Traffic Lights after creation: " << TrafficLight::getTotalTrafficLights() << endl;
+    // Change States
+    cout << "\nChanging States:" << endl;
+    manager.changeAllLights();
+    manager.displayLights();
 
     return 0;
 }
